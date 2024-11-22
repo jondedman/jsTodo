@@ -18,6 +18,24 @@ const addToCache =  (newTask) => {
 
 const todoList = document.getElementById('todo-list');
 
+// Allow the drop
+todoList.addEventListener('dragover', (event) => {
+  event.preventDefault(); // Necessary to enable dropping
+  console.log('Drag over a drop zone');
+});
+
+// Handle the drop
+todoList.addEventListener('drop', (event) => {
+  event.preventDefault();
+  const droppedItemId = event.dataTransfer.getData('text/plain'); // Get the dragged item’s ID
+  console.log(droppedItemId);
+
+  const droppedItem = document.getElementById(droppedItemId);
+
+  console.log('Dropped item:', droppedItem);
+  todoList.appendChild(droppedItem); // Add the item to the new container
+});
+
 const completeTask = (checkbox, li) => {
   checkbox.addEventListener('change', () =>{
     if (checkbox.checked) {
@@ -51,7 +69,10 @@ const renderTodoItem = (item) => {
   span.textContent = item["task"];
   li.className = 'todo-item';
   li.appendChild(span);
+  li.setAttribute('draggable', true);
   let itemId = item["id"];
+  li.id = itemId;
+
   let removeButton = createRemoveButton();
   removeButton.addEventListener('click', ()=>{
     removeItem(li, itemId);
@@ -61,6 +82,10 @@ const renderTodoItem = (item) => {
   li.appendChild(removeButton);
   li.addEventListener('dblclick', ()=>{
     editItem(li, itemId);
+  });
+  li.addEventListener('dragstart', (event) => {
+    console.log('Drag started:', event.target);
+    event.dataTransfer.setData('text/plain', event.target.id); // Store the item’s ID
   });
   todoList.appendChild(li);
 }
