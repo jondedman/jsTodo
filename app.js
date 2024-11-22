@@ -84,8 +84,11 @@ const renderTodoItem = (item) => {
     editItem(li, itemId);
   });
   li.addEventListener('dragstart', (event) => {
-    console.log('Drag started:', event.target);
+    li.classList.add('dragging');
     event.dataTransfer.setData('text/plain', event.target.id); // Store the item’s ID
+  });
+  li.addEventListener('dragend', () => {
+    li.classList.remove('dragging');
   });
   todoList.appendChild(li);
 }
