@@ -1,0 +1,21 @@
+li {
+  text-decoration: none;
+  list-style-type: none;
+}
+
+.todo-item {
+  border: solid;
+  margin-right: 40%;
+  margin-left: 40%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  gap: 10px;
+}
+
+.completed {
+  text-decoration: line-through;
+  background-color: darkgrey;
+}
