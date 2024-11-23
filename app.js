@@ -1,8 +1,14 @@
 let todoItems = [
-  {id: 1, task: "code"},
-  {id:2, task: "tidy"},
-  {id: 3, task: "shop"}
+  {id: 1, task: "code", delegated: "Jon", due: new Date('2024-12-08T23:59:59Z')},
+  {id:2, task: "tidy", delegated: "Farrah", due: new Date('2024-12-10T23:59:59Z')},
+  {id: 3, task: "shop", delegated: "Marcelo", due: new Date('2024-12-09T23:59:59Z')}
 ];
+
+// Function to convert ISO string to a more readable format
+function formatDate(isoString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(isoString).toLocaleDateString(undefined, options);
+}
 
 const findItemById = (id) => {
   return todoItems.find(item =>item.id == id);
@@ -65,10 +71,16 @@ const renderTodoItem = (item) => {
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   let li =  document.createElement('li');
-  let span = document.createElement('span');
-  span.textContent = item["task"];
+  let taskSpan = document.createElement('span');
+  let personSpan = document.createElement('span');
+  let dateSpan = document.createElement('span');
+  taskSpan.textContent = item["task"];
+  personSpan.textContent = item["delegated"];
+  dateSpan.textContent = formatDate(item["due"]);
   li.className = 'todo-item';
-  li.appendChild(span);
+  li.appendChild(taskSpan);
+  li.appendChild(personSpan);
+  li.appendChild(dateSpan);
   li.setAttribute('draggable', true);
   let itemId = item["id"];
   li.id = itemId;
