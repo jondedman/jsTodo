@@ -43,13 +43,14 @@ todoList.addEventListener('drop', (event) => {
 });
 
 const completeTask = (checkbox, li) => {
-  checkbox.addEventListener('change', () =>{
-    if (checkbox.checked) {
-      li.classList.add('completed');
-    } else {
-      li.classList.remove('completed')
-    }
-  })
+  console.log("complete task called");
+  console.log(li, checkbox);
+
+  if (checkbox.checked) {
+    li.classList.add('completed');
+  } else {
+    li.classList.remove('completed')
+  }
 }
 
 const editItem = (li, itemId) => {
@@ -67,33 +68,51 @@ const editItem = (li, itemId) => {
     todoList.removeChild(li);
   }
 
-const renderTodoItem = (item) => {
+const createCheckbox = (itemId) => {
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  let li =  document.createElement('li');
-  let taskSpan = document.createElement('span');
-  let personSpan = document.createElement('span');
-  let dateSpan = document.createElement('span');
-  taskSpan.textContent = item["task"];
-  personSpan.textContent = item["delegated"];
-  dateSpan.textContent = formatDate(item["due"]);
+  return checkbox;
+};
+
+const createSpan = (textContent) => {
+  let span = document.createElement('span');
+  span.textContent = textContent;
+  return span;
+};
+
+const createRemoveButton = (li, itemId) => {
+  let removeButton = document.createElement('button');
+  removeButton.textContent = 'Remove';
+  removeButton.addEventListener('click', () => {
+    removeItem(li, itemId);
+  });
+  return removeButton;
+};
+
+const renderTodoItem = (item) => {
+  let li = document.createElement('li');
   li.className = 'todo-item';
+  li.id = item.id;
+  li.setAttribute('draggable', true);
+
+  let checkbox = createCheckbox(item.id);
+  let taskSpan = createSpan(item.task);
+  let personSpan = createSpan(item.delegated);
+  let dateSpan = createSpan(formatDate(item.due));
+  let removeButton = createRemoveButton(li, item.id);
+
+  li.appendChild(checkbox);
   li.appendChild(taskSpan);
   li.appendChild(personSpan);
   li.appendChild(dateSpan);
-  li.setAttribute('draggable', true);
-  let itemId = item["id"];
-  li.id = itemId;
-
-  let removeButton = createRemoveButton();
-  removeButton.addEventListener('click', ()=>{
-    removeItem(li, itemId);
-  });
-  completeTask(checkbox, li);
-  li.prepend(checkbox);
   li.appendChild(removeButton);
-  li.addEventListener('dblclick', ()=>{
-    editItem(li, itemId);
+
+  checkbox.addEventListener('change', () =>{
+    completeTask(checkbox, li);
+  })
+
+  li.addEventListener('dblclick', () => {
+    editItem(li, item.id);
   });
   li.addEventListener('dragstart', (event) => {
     li.classList.add('dragging');
@@ -102,8 +121,9 @@ const renderTodoItem = (item) => {
   li.addEventListener('dragend', () => {
     li.classList.remove('dragging');
   });
+
   todoList.appendChild(li);
-}
+};
 
 const addItem = () => {
   let text = prompt('Enter a new Item');
@@ -116,13 +136,6 @@ const addItem = () => {
 const deleteLastItem = () => {
   let lastItem =  todoList.lastChild;
   todoList.removeChild(lastItem);
-}
-
-const createRemoveButton = () => {
-  let removeButton = document.createElement('button');
-  removeButton.textContent = "X";
-  removeButton.className = "deleteButton";
-  return removeButton;
 }
 
 todoItems.forEach(item =>{
