@@ -1,12 +1,14 @@
-li {
-  text-decoration: none;
-  list-style-type: none;
+/* Example CSS reset for list items */
+ul, li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .todo-item {
   border: solid;
-  margin-right: 40%;
-  margin-left: 40%;
+  margin-right: 30%;
+  margin-left: 30%;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   display: flex;
@@ -14,6 +16,15 @@ li {
   padding: 1rem;
   gap: 10px;
 }
+
+.todo-item span {
+  flex: 1;
+  margin-right: 0.5rem;
+}
+/* .title-span {
+  text-align: left;
+  /* background-color: blue; */
+
 
 .completed {
   text-decoration: line-through;

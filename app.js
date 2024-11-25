@@ -1,7 +1,8 @@
 let todoItems = [
-  {id: 1, task: "code", delegated: "Jon", due: new Date('2024-12-08T23:59:59Z')},
+  {id: 1, task: "code all day", delegated: "Jon", due: new Date('2024-12-08T23:59:59Z')},
   {id:2, task: "tidy", delegated: "Farrah", due: new Date('2024-12-10T23:59:59Z')},
-  {id: 3, task: "shop", delegated: "Marcelo", due: new Date('2024-12-09T23:59:59Z')}
+  {id: 3, task: "shop", delegated: "Marcelo", due: new Date('2024-12-09T23:59:59Z')},
+  {id: 4, task: "emails", delegated: "Marcelo", due: new Date('2024-12-09T23:59:59Z')}
 ];
 
 // Function to convert ISO string to a more readable format
@@ -22,24 +23,64 @@ const addToCache =  (newTask) => {
   todoItems.push(newTask)
 }
 
+const getDragAfterElement = (container, y) => {
+  // Select all draggable elements within the container that are not currently being dragged
+  const draggableElements = [...container.querySelectorAll('.todo-item:not(.dragging)')];
+
+  // Use the reduce method to find the closest element below the current mouse position
+  return draggableElements.reduce((closest, child) => {
+    // Get the bounding rectangle of the current element
+    const box = child.getBoundingClientRect();
+    // Calculate the offset of the mouse Y-coordinate from the middle of the current element
+    const offset = y - box.top - box.height / 2;
+
+    // Check if the offset is less than 0 (mouse is above the middle of the element)
+    // and greater than the closest offset found so far
+    if (offset < 0 && offset > closest.offset) {
+      // If both conditions are met, update the closest element and offset
+      return { offset: offset, element: child };
+    } else {
+      // Otherwise, keep the current closest element and offset
+      return closest;
+    }
+  },
+  // Initial value for the reduce function: an object with offset set to negative infinity
+  // This ensures that any valid element will be closer than the initial value
+  { offset: Number.NEGATIVE_INFINITY }).element; // Return the closest element found
+};
 const todoList = document.getElementById('todo-list');
 
 // Allow the drop
 todoList.addEventListener('dragover', (event) => {
   event.preventDefault(); // Necessary to enable dropping
-  console.log('Drag over a drop zone');
+  const afterElement = getDragAfterElement(todoList, event.clientY);
+  const draggingElement =document.querySelector('.dragging');
+  // draggingElement.classList.remove('dragging');
+if (draggingElement) {
+  if (afterElement == null) {
+    todoList.appendChild(draggingElement);
+  } else {
+    todoList.insertBefore(draggingElement, afterElement)
+  }
+}
 });
 
 // Handle the drop
+// todoList.addEventListener('drop', (event) => {
+//   event.preventDefault();
+//   const droppedItemId = event.dataTransfer.getData('text/plain'); // Get the dragged item’s ID
+//   console.log(droppedItemId);
+
+//   const droppedItem = document.getElementById(droppedItemId);
+
+//   console.log('Dropped item:', droppedItem);
+//   todoList.appendChild(droppedItem); // Add the item to the new container
+// });
+
 todoList.addEventListener('drop', (event) => {
   event.preventDefault();
-  const droppedItemId = event.dataTransfer.getData('text/plain'); // Get the dragged item’s ID
-  console.log(droppedItemId);
-
-  const droppedItem = document.getElementById(droppedItemId);
-
-  console.log('Dropped item:', droppedItem);
-  todoList.appendChild(droppedItem); // Add the item to the new container
+  const draggingElement = document.querySelector('.dragging');
+  draggingElement.classList.remove('dragging');
 });
 
 const completeTask = (checkbox, li) => {
@@ -97,6 +138,7 @@ const renderTodoItem = (item) => {
 
   let checkbox = createCheckbox(item.id);
   let taskSpan = createSpan(item.task);
+  taskSpan.className = 'title-span';
   let personSpan = createSpan(item.delegated);
   let dateSpan = createSpan(formatDate(item.due));
   let removeButton = createRemoveButton(li, item.id);
